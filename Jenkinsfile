@@ -14,7 +14,19 @@ pipeline{
                 sh "docker build -t node-app ."
             }
         }
-      
+        stage("push to docker hub"){
+            steps{
+                echo "pusiing code in docker hub"
+                withCredentials([usrnamePassword(
+                    credentialsID:"dockerHubCreds",
+                    usernameVariable:"dockerHubUser",
+                    passwordVariable:"dockerHubPass")]){
+                    sh 'echo $dockerhubPass | docker login -u $dockerHubUser --password-stdin'
+                    sh "docker image tag node-app:latest ${env.dockerHubUser}/node-app:latest"
+                    sh "docker push ${env.dockerHubUser}/node-app:latest"
+                 
+            }
+        }
         stage("Deploy"){
             steps{
                 sh "docker compose down && docker compose up -d --build"
