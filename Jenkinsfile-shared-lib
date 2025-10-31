@@ -3,8 +3,9 @@ pipeline{
     agent { label 'dev-node' }
     
     stages{
-        stage("Code Clone"){
+        stage("Code Clone in shared library"){
             steps{
+              echo "using shared library"
               clone("https://github.com/AayushJaiswal1/node-todo-cicd","master")
             }
         }
