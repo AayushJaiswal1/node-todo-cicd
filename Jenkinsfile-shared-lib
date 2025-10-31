@@ -1,0 +1,37 @@
+@Library('Shared')_
+pipeline{
+    agent { label 'dev-node' }
+    
+    stages{
+        stage("Code Clone"){
+            steps{
+              clone("https://github.com/AayushJaiswal1/node-todo-cicd","master")
+            }
+        }
+        stage("Code Build & Test"){
+            steps{
+                echo "Code Build Stage"
+                sh "docker build -t node-app ."
+            }
+        }
+        stage("push to docker hub"){
+            steps{
+                echo "pusiing code in docker hub"
+                withCredentials([usernamePassword(
+                    credentialsId:"dockerHubCreds",
+                    usernameVariable:"dockerHubUser",
+                    passwordVariable:"dockerHubPass")]){
+                    sh 'echo $dockerHubPass | docker login -u $dockerHubUser --password-stdin'
+                    sh "docker image tag node-app:latest ${env.dockerHubUser}/node-app:latest"
+                    sh "docker push ${env.dockerHubUser}/node-app:latest"
+                }
+                 
+            }
+        }
+        stage("Deploy"){
+            steps{
+                sh "docker compose down && docker compose up -d --build"
+            }
+        }
+    }
+}
