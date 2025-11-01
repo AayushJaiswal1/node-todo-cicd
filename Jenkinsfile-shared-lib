@@ -11,12 +11,12 @@ pipeline{
         }
         stage("Code Build & Test"){
             steps{
-              build("note-app", "latest")
+              build("note-app","latest")
             }
         }
         stage("push to docker hub"){
             steps{
-                  dockerpush("dockerHubCreds","note-app", "latest")
+                  dockerpush("dockerHubCreds","note-app","latest")
                 }
                  
             }
