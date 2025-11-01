@@ -11,7 +11,7 @@ pipeline{
         }
         stage("Code Build & Test"){
             steps{
-              build("note-app")
+              build("note-app", "latest")
             }
         }
         stage("push to docker hub"){
